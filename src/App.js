@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, collection, addDoc,updateDoc, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { Check, X, Edit, Trash2, Calendar, Lightbulb, Send, Loader2, Plus } from 'lucide-react';
-import { firebaseConfig, app, db, auth } from './firebase';
+import { firebaseConfig } from './firebase';
 
 const App = () => {
   // Firebase related states
@@ -84,6 +84,7 @@ useEffect(() => {
 
   return () => unsubscribe(); // Cleanup on unmount
 }, []);
+
 
   // 2. Data Fetching and Real-time Listeners (onSnapshot)
   useEffect(() => {
