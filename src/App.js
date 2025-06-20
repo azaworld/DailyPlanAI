@@ -55,36 +55,33 @@ const App = () => {
   
 
   // 1. Firebase Initialization and Authentication
-useEffect(() => {
-  // Initialize Firebase using actual config (not __firebase_config)
-  const initializedApp = initializeApp(firebaseConfig);
-  const firestoreDb = getFirestore(initializedApp);
-  const firebaseAuth = getAuth(initializedApp);
-
-  setApp(initializedApp);
-  setDb(firestoreDb);
-  setAuth(firebaseAuth);
-
-  // Listen for auth state changes
-  const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
-    if (user) {
-      setUserId(user.uid);
-    } else {
-      try {
-        // You can optionally fetch token from backend if needed, for now we assume anonymous
-        await signInAnonymously(firebaseAuth);
-      } catch (error) {
-        console.error("Error signing in anonymously:", error);
-        setUserId(crypto.randomUUID()); // fallback ID
+  useEffect(() => {
+    const initializedApp = initializeApp(firebaseConfig);
+    const firestoreDb = getFirestore(initializedApp);
+    const firebaseAuth = getAuth(initializedApp);
+  
+    setDb(firestoreDb); // ✅ keep only if used
+    // setApp(initializedApp); ❌ remove if not used
+    // setAuth(firebaseAuth); ❌ remove if not used
+  
+    const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        try {
+          await signInAnonymously(firebaseAuth);
+        } catch (error) {
+          console.error("Error signing in anonymously:", error);
+          setUserId(crypto.randomUUID());
+        }
       }
-    }
-
-    setIsAuthReady(true); // Done with auth
-  });
-
-  return () => unsubscribe(); // Cleanup on unmount
-}, []);
-
+      setIsAuthReady(true);
+    });
+  
+    return () => unsubscribe();
+  }, []);
+  
+  
 
   // 2. Data Fetching and Real-time Listeners (onSnapshot)
   useEffect(() => {
